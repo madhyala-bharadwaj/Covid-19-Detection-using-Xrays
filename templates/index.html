@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 Detection</title>
+    <link rel="icon" type="image/x-icon" href="/static/imgs/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        {% if not prediction %}
+            <h1 class="title">Covid-19 Detection using CT Scans</h1>
+            <p>Upload your CT scan image to determine if it shows signs of Covid-19.</p>
+            <form action="/predict" method="post" enctype="multipart/form-data">
+                <label for="file" class="custom-file-upload">
+                    <input type="file" id="file" name="file" accept="image/*" required>
+                    <i class="fas fa-cloud-upload-alt"></i> 
+                    <span class="nowrap">Choose an image</span>
+                </label>
+                <button type="submit" class="submitBtn">Submit</button>
+            </form>
+        {% else %}
+            <h1 class="title">Covid-19 Detection Result</h1>
+            <div class="result">
+                <p class="prediction {% if prediction=='Covid-19 Positive' %}positive{% else %}negative{% endif %}">
+                    {{ prediction }}
+                </p>
+                <p class="subtext">Thank you for using our Covid-19 Detection System!</p>
+                <a href="/" class="btn">Check Another Image</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
