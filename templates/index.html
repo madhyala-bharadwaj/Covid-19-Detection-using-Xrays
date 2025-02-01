@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Detection</title>
+    <link rel="icon" type="image/png" href="static\imgs\favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2A5C82;
+            --secondary-color: #5BA4E6;
+            --accent-color: #FF6B6B;
+        }
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            position: relative;
+            padding-top: 56px;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        #logo {
+            height: 28px;
+            width: auto;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .main-card:hover {
+            transform: translateY(-5px);
+        }
+        .upload-section {
+            border: 2px dashed var(--secondary-color);
+            background: rgba(91, 164, 230, 0.05);
+            transition: all 0.3s ease;
+        }
+        .upload-section.dragover {
+            background: rgba(91, 164, 230, 0.1);
+            border-color: var(--primary-color);
+        }
+        .tech-stack {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        .technology-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            min-width: 160px;
+        }
+        .technology-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        .technology-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .tech-icon {
+            width: 2rem;
+            height: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .result-card {
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+        .positive { border-color: #dc3545; }
+        .negative { border-color: #28a745; }
+        .loading-spinner {
+            display: none;
+            width: 3rem;
+            height: 3rem;
+        }
+        .clinical-recommendations {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.3s;
+        }
+        .clinical-recommendations.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .github-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary-color);">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='/imgs/favicon.ico') }}" alt="COVID-19 Detection Logo" id= "logo">
+                COVID-19 Detection
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="main-card p-4 mb-4">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-lungs-virus me-2"></i>AI-Powered COVID-19 Detection Using Chest X-Rays
+                    </h2>
+                    
+                    <!-- Tech Stack Section -->
+                    <div class="tech-stack mb-4">
+                        <h5 class="text-center mb-4 position-relative">System Components</h5>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="https://www.tensorflow.org/" target="_blank" class="technology-card text-center text-decoration-none text-white">
+                                <svg class="tech-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                                    <polygon fill="currentColor" points="16,39.609 23,43.609 23,4 16,8"></polygon>
+                                    <polygon fill="currentColor" points="23,12.433 6,22.25 6,13.75 23,3.933"></polygon>
+                                    <polygon fill="currentColor" points="32,39.609 25,43.609 25,4 32,8"></polygon>
+                                    <polygon fill="currentColor" points="25,12.433 42,22.25 42,13.75 25,3.933"></polygon>
+                                    <polygon fill="currentColor" points="29,19.732 29,27.365 36,31.407 36,23.775"></polygon>
+                                </svg>
+                                <div>TensorFlow/Keras</div>
+                                <small class="opacity-75">Deep Learning Framework</small>
+                            </a>
+                            <a href="https://flask.palletsprojects.com/" target="_blank" class="technology-card text-center text-decoration-none text-white">
+                                <i class="fab fa-python"></i>
+                                <div>Python Flask</div>
+                                <small class="opacity-75">Web Framework</small>
+                            </a>
+                            <a href="https://opencv.org/" target="_blank" class="technology-card text-center text-decoration-none text-white">
+                                <svg class="tech-icon" viewBox="0 0 48 48">
+                                    <path fill="currentColor" d="M35,43c-5.514,0-10-4.486-10-10c0-3.562,1.916-6.88,5-8.66l3,5.196c-1.233,0.712-2,2.039-2,3.464 c0,2.168,1.832,4,4,4s4-1.832,4-4c0-1.425-0.767-2.752-2-3.464l3-5.196c3.084,1.78,5,5.099,5,8.66C45,38.514,40.514,43,35,43z"/>
+                                    <path fill="currentColor" d="M29,22.629l-3-5.196c1.233-0.712,2-2.04,2-3.464c0-2.168-1.832-4-4-4s-4,1.832-4,4 c0,1.425,0.767,2.752,2,3.464l-3,5.196c-3.084-1.781-5-5.1-5-8.661c0-5.514,4.486-10,10-10s10,4.486,10,10 C34,17.53,32.084,20.849,29,22.629z"/>
+                                    <path fill="currentColor" d="M13.001,43.028c-3.459,0-6.827-1.793-8.678-4.997c-2.757-4.776-1.115-10.903,3.66-13.661 c3.085-1.781,6.917-1.781,10,0l-3,5.196c-1.234-0.713-2.766-0.713-4,0c-1.878,1.084-2.548,3.586-1.465,5.464 c1.084,1.877,3.586,2.549,5.465,1.464c1.233-0.712,2-2.04,2-3.464h6c0,3.561-1.916,6.879-5,8.66 C16.413,42.598,14.695,43.028,13.001,43.028z"/>
+                                </svg>
+                                <div>OpenCV</div>
+                                <small class="opacity-75">Image Processing</small>
+                            </a>
+                        </div>
+                    </div>
+
+                    <form id="uploadForm" method="POST" action="/predict" enctype="multipart/form-data">
+                        <div class="upload-section text-center p-5 rounded-3 mb-4" 
+                             id="dropZone"
+                             ondragover="event.preventDefault(); this.classList.add('dragover')"
+                             ondragleave="this.classList.remove('dragover')"
+                             ondrop="event.preventDefault(); this.classList.remove('dragover'); handleFileDrop(event)">
+                            <input type="file" name="file" id="fileInput" class="d-none" accept="image/*">
+                            <label for="fileInput" class="cursor-pointer">
+                                <i class="fas fa-file-upload fa-3x text-secondary mb-3"></i>
+                                <h4>Drag & Drop or Click to Upload</h4>
+                                <p class="text-muted mt-2">Supported formats: .jpg, .png, .dcm</p>
+                            </label>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg px-5" id="analyzeBtn">
+                                <i class="fas fa-search-medical me-2"></i>Analyze Image
+                            </button>
+                            <div class="spinner-border text-primary mt-3 loading-spinner" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Image Preview -->
+                    <div class="text-center mb-4" id="previewContainer" style="display: none;">
+                        <h5 class="mb-3">Preview</h5>
+                        <img id="imagePreview" class="img-fluid rounded shadow" style="max-height: 300px;">
+                    </div>
+
+                    <!-- Results -->
+                    {% if prediction %}
+                    <div class="result-card p-4 rounded-3 {{ 'negative' if 'Negative' in prediction else 'positive' }}">
+                        <h4 class="mb-3">
+                            <i class="fas fa-diagnoses me-2"></i>Analysis Result:
+                            <span class="{{ 'text-success' if 'Negative' in prediction else 'text-danger' }}">
+                                {{ prediction }}
+                            </span>
+                        </h4>
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Note: This AI-powered diagnosis should be verified by a medical professional.
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-2"></i>Processing time: {{ "%.2f"|format(processing_time) }}s |
+                                Confidence: {{ "%.1f"|format(confidence) }}% 
+                            </small>                        
+                        </div>
+
+                        <!-- Demo Image Display -->
+                        {% if is_demo %}
+                        <div class="demo-image-preview mt-4">
+                            <h5>Sample Scan Used:</h5>
+                            <img src="{{ url_for('static', filename=demo_image) }}" id="imagePreview" class="img-fluid rounded shadow" style="max-height: 300px;" >
+                        </div>
+                        {% endif %}
+
+                        <!-- Clinical Recommendations -->
+                        <div class="clinical-recommendations mt-4">
+                            {% if 'Positive' in prediction %}
+                            <div class="card border-danger">
+                                <div class="card-header bg-danger text-white">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Recommended Actions (COVID-19 Positive)
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <i class="fas fa-phone-alt me-2 text-success"></i>
+                                            Contact healthcare provider immediately
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-head-side-mask me-2 text-primary"></i>
+                                            Isolate yourself and wear a mask
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-syringe me-2 text-warning"></i>
+                                            Schedule a PCR test within 24 hours
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-bed me-2 text-info"></i>
+                                            Monitor oxygen levels, rest adequately and stay hydrated
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-user-friends me-2 text-danger"></i>
+                                            Notify close contacts so they can take precautions
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-user-lock me-2 text-secondary"></i>
+                                            Follow local quarantine guidelines and minimize household contact
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <i class="fas fa-check-circle me-2"></i>Recommended Actions (COVID-19 Negative)
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <i class="fas fa-thermometer me-2 text-primary"></i>
+                                            Continue monitoring for any symptoms
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-hand-sparkles me-2 text-warning"></i>
+                                            Maintain proper hygiene practices
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-syringe me-2 text-success"></i>
+                                            Consider COVID-19 vaccination if not vaccinated
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-calendar-check me-2 text-info"></i>
+                                            Follow local public health guidelines and stay informed
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="fas fa-apple-alt me-2 text-success"></i>
+                                            Boost your immunity by maintaining a healthy lifestyle
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Demo Section -->
+                    <div class="demo-section mt-5">
+                        <h3 class="text-center mb-4">Try Demo Scans</h3>
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <button onclick="location.href='/demo/1'" class="btn btn-outline-primary mb-2">
+                                    <i class="fas fa-virus me-2"></i>COVID Positive Sample
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button onclick="location.href='/demo/2'" class="btn btn-outline-success mb-2">
+                                    <i class="fas fa-lungs me-2"></i>COVID Negative Sample
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button onclick="location.href='/demo/3'" class="btn btn-outline-warning mb-2">
+                                    <i class="fas fa-question me-2"></i>Uncertain Sample
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating GitHub Button -->
+    <div class="github-floating">
+        <a href="https://github.com/madhyala-bharadwaj/Covid-19-Detection-using-Xrays" 
+           class="btn btn-dark btn-lg shadow-lg"
+           target="_blank"
+           rel="noopener noreferrer">
+            <i class="fab fa-github me-2"></i>View Source Code
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Drag & Drop handling
+        function handleFileDrop(e) {
+            const file = e.dataTransfer.files[0];
+            document.getElementById('fileInput').files = e.dataTransfer.files;
+            showPreview(file);
+        }
+
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            if(e.target.files.length > 0) showPreview(e.target.files[0]);
+        });
+
+        // Show image preview
+        function showPreview(file) {
+            const preview = document.getElementById('imagePreview');
+            const container = document.getElementById('previewContainer');
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // Show loading spinner during processing
+        document.getElementById('uploadForm').addEventListener('submit', () => {
+            document.querySelector('.loading-spinner').style.display = 'inline-block';
+            document.getElementById('analyzeBtn').disabled = true;
+        });
+
+        // loading recommendations 
+        window.addEventListener('load', () => {
+            const recSection = document.querySelector('.clinical-recommendations');
+            if(recSection) recSection.classList.add('visible');
+        });
+    </script>
+</body>
+</html>
