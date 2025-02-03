@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 try:
-    model = load_model('bestModel.hdf5')
+    model = load_model('bestModel.hdf5', compile=False)
 except Exception as e:
     app.logger.error(f"Error loading model: {str(e)}")
     raise RuntimeError("Failed to load model") from e
